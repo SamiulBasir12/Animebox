@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Animebox – অ্যানিমে ডিসকভারি</title>
+<style>
+:root{--bg:#f4f5fa;--fg:#14141c;--mut:#667;--card:#fff;--line:#dfe1ec;--acc:#7c5cff;--acc2:#22d3b6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080b14;--fg:#eef0f8;--mut:#8f96ad;--card:#111627;--line:#222a40;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080b14;--fg:#eef0f8;--mut:#8f96ad;--card:#111627;--line:#222a40;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--fg);font-family:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+header{text-align:center;padding:28px 5vw 8px}
+.logo{font-size:clamp(2rem,7vw,3.2rem);font-weight:900;letter-spacing:1px}
+.logo b{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{color:var(--mut);margin-top:4px}
+.sbar{display:flex;max-width:640px;margin:18px auto 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.sbar input{flex:1;border:0;background:none;color:var(--fg);padding:14px 18px;font-size:1rem;outline:none;min-width:0}
+.sbar span{background:linear-gradient(135deg,var(--acc),var(--acc2));padding:0 20px;display:flex;align-items:center;color:#fff}
+.hero{margin:22px 5vw;border-radius:20px;min-height:280px;padding:clamp(22px,5vw,56px);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;position:relative;overflow:hidden;transition:background .5s}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.05))}
+.hero>*{position:relative}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem)}.hero p{max-width:520px;opacity:.93}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.btn{border:0;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:.95rem;text-decoration:none;color:#fff;background:var(--acc);display:inline-block}
+.btn.g{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4)}
+.panel{margin:0 5vw 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.panel h2{font-size:1.15rem;margin-bottom:10px;padding-left:10px;border-left:4px solid var(--acc2)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:6px 15px;border-radius:999px;cursor:pointer;font-size:.9rem}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card{cursor:pointer;transition:transform .2s}.card:hover{transform:translateY(-4px)}
+.poster{aspect-ratio:2/3;border-radius:12px;display:flex;align-items:flex-end;padding:10px;color:#fff;font-weight:800;line-height:1.2;position:relative;overflow:hidden}
+.poster::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.65),transparent 55%)}
+.poster>*{position:relative;z-index:1}
+.rt{position:absolute!important;top:8px;left:8px;background:rgba(0,0,0,.65);border-radius:8px;padding:1px 8px;font-size:.78rem;font-weight:700}
+.ty{position:absolute!important;bottom:auto;top:auto;left:8px;bottom:46px;background:#16a37f;border-radius:6px;padding:0 8px;font-size:.68rem}
+.ct{padding:8px 2px;font-size:.9rem;font-weight:600}.ct small{display:block;color:var(--mut);font-weight:400}
+.empty{color:var(--mut);padding:10px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+#modal.open{display:flex}
+.box{background:var(--card);border-radius:18px;max-width:640px;width:100%;max-height:92%;overflow-y:auto}
+.box .poster{aspect-ratio:16/7;border-radius:0;font-size:1.8rem}
+.body{padding:18px 22px 22px;display:grid;gap:12px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:1px 10px;font-size:.8rem;margin:0 6px 4px 0;color:var(--mut)}
+.note{font-size:.82rem;color:var(--mut)}
+a.chip{text-decoration:none}.vp{aspect-ratio:16/9;width:100%;border:0;border-radius:12px;margin-top:12px}.vin{display:flex;gap:8px;flex-wrap:wrap}.vin input{flex:1;min-width:200px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 14px;font-size:.95rem}.nt{color:var(--mut);font-size:.85rem;margin-top:10px}
+.poster::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 18%,rgba(255,255,255,.38),transparent 42%),repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 8px,transparent 8px 16px)}.lt{position:absolute!important;right:4px;top:12%;font-size:6.5rem;font-style:normal;font-weight:900;opacity:.25;line-height:1;z-index:0!important}.box .lt{font-size:9rem}
+@keyframes up{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.8) translateY(40px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes flip{0%{transform:perspective(600px) rotateY(0)}50%{transform:perspective(600px) rotateY(80deg) scale(1.06)}100%{transform:perspective(600px) rotateY(0)}}
+@keyframes rip{to{transform:scale(7);opacity:0}}
+@keyframes bump{50%{transform:scale(1.14)}}
+@keyframes float{50%{transform:translateY(-18px) rotate(3deg)}}
+.card{animation:up .55s backwards}
+.card .poster{transition:box-shadow .25s}
+.card:hover .poster{box-shadow:0 14px 32px rgba(124,92,255,.5)}
+.card:active{transform:scale(.95)}
+.card.clk .poster{animation:flip .38s ease}
+.rip{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .6s ease-out;pointer-events:none;z-index:3}
+#modal.open{animation:fade .25s}
+#modal.open .box{animation:pop .4s cubic-bezier(.2,.9,.3,1.25)}
+.chip,.btn{transition:transform .15s,box-shadow .2s,background .2s}
+.chip:hover,.btn:hover{transform:translateY(-2px)}
+.chip:active,.btn:active{transform:scale(.93)}
+.btn:hover{box-shadow:0 8px 20px rgba(124,92,255,.4)}
+.chip.on{animation:bump .3s}
+.hero h1,.hero p,.hero .row{animation:up .7s backwards}
+.hero p{animation-delay:.12s}.hero .row{animation-delay:.24s}
+.hero .lt{animation:float 6s ease-in-out infinite}
+.logo b{background-size:200% 100%;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:200% 0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+#ld{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .6s,visibility .6s}#ld.off{opacity:0;visibility:hidden}.ldl{font-size:2.6rem}.ldb{width:190px;height:5px;border-radius:9px;background:var(--line);overflow:hidden}.ldb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));animation:ldb 1.3s ease-out forwards}@keyframes ldb{to{width:100%}}
+.fm{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.fm input,.fm select,.fm textarea{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 12px;font:inherit;width:100%}.fm .w{grid-column:1/-1}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.tl{display:flex;gap:10px;align-items:center;text-align:left;background:var(--bg);border:1px solid var(--line);color:var(--fg);border-radius:14px;padding:12px;cursor:pointer;text-decoration:none;font:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}.tl:hover{transform:translateY(-3px);border-color:var(--acc2);box-shadow:0 10px 26px -12px rgba(34,211,182,.5)}.tl:active{transform:scale(.96)}.tl i{font-style:normal;font-size:1.4rem;flex:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(124,92,255,.15)}.tl b{display:block;font-size:.92rem;line-height:1.25}.tl small{color:var(--mut);font-size:.75rem;display:block}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.wc{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px;transition:transform .16s,border-color .16s}.wc:hover{transform:translateY(-3px);border-color:var(--acc)}.wc span{display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:rgba(34,211,182,.16);color:var(--acc2);font-weight:900;margin-bottom:8px}.wc h3{font-size:.98rem;margin-bottom:4px}.wc p{color:var(--mut);font-size:.85rem}
+details{border-top:1px solid var(--line);padding:12px 0}details:first-of-type{border-top:0}summary{cursor:pointer;font-weight:700}details p{color:var(--mut);margin-top:6px;font-size:.92rem}
+.ft{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;text-align:left;max-width:1100px;margin:0 auto 16px}.ft h4{color:var(--fg);margin-bottom:6px}.ft p{font-size:.85rem}.ft a{display:block;color:var(--mut);text-decoration:none;padding:2px 0;font-size:.88rem}.ft a:hover{color:var(--acc2)}
+#tg{position:absolute;top:14px;right:5vw;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .25s,box-shadow .25s,background .35s}#tg:hover{transform:rotate(25deg) scale(1.08);box-shadow:0 8px 22px -8px rgba(124,92,255,.6)}#tg:active{transform:scale(.9)}#tg.sp{animation:tgs .5s}@keyframes tgs{from{transform:rotate(-180deg) scale(.6)}to{transform:none}}
+body{transition:background .35s,color .35s}.panel,.card .ct,.box,footer,input,select,textarea{transition:background .35s,border-color .35s,color .35s}
+footer{text-align:center;color:var(--mut);padding:22px 5vw;font-size:.85rem;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="ld"><div style="font-size:3.2rem;animation:float 1.2s ease-in-out infinite">🎌</div><div class="logo ldl">Anime<b>box</b></div><div class="ldb"><i></i></div></div>
+<header style="position:relative"><button id="tg" aria-label="থিম বদলান" title="লাইট / ডার্ক মোড"></button>
+<div class="logo">Anime<b>box</b></div>
+<div class="tag">অ্যানিমে ও মুভি ডিসকভারি · রেটিং · ট্রেলার · কোথায় দেখবেন</div>
+<div class="sbar"><input id="q" placeholder="অ্যানিমের নাম লিখুন (English)" aria-label="সার্চ"><span>🔍</span></div>
+</header>
+<section class="hero" id="hero"></section>
+<section class="panel"><h2>🧭 Animebox এক্সপ্লোর</h2><div class="tiles">
+<button class="tl" data-a="all"><i>🎌</i><span><b>সব অ্যানিমে</b><small>সবগুলো এক জায়গায়</small></span></button>
+<button class="tl" data-a="movie"><i>🎬</i><span><b>অ্যানিমে মুভি</b><small>ফিচার ফিল্ম</small></span></button>
+<button class="tl" data-a="trend"><i>🔥</i><span><b>ট্রেন্ডিং</b><small>সেরা রেটিং</small></span></button>
+<button class="tl" data-a="wl"><i>❤</i><span><b>ওয়াচলিস্ট</b><small>আপনার পছন্দের তালিকা</small></span></button>
+<button class="tl" data-a="lang"><i>🎧</i><span><b>ভাষা ও ডাব</b><small>বাংলা, হিন্দি, ইংলিশ</small></span></button>
+<button class="tl" data-a="vid"><i>▶</i><span><b>ভিডিও প্লেয়ার</b><small>বৈধ ভিডিও চালান</small></span></button>
+<button class="tl" data-a="add"><i>➕</i><span><b>অ্যানিমে যোগ</b><small>নিজের তালিকায়</small></span></button>
+</div></section>
+<section class="panel"><h2>ফিল্টার</h2>
+<div class="chips" id="types" style="margin-bottom:10px"></div>
+<div class="chips" id="gens"></div></section>
+<section class="panel"><h2 id="ttl">সব অ্যানিমে</h2><div class="grid" id="grid"></div></section>
+<section class="panel"><h2>🔥 ট্রেন্ডিং</h2><div class="grid" id="trend"></div></section>
+<section class="panel"><h2>🏷 জেনরা অনুযায়ী ব্রাউজ</h2><div class="tiles" id="gt"></div></section>
+<section class="panel" id="lg"><h2>🌐 ভাষা অনুযায়ী ব্রাউজ</h2><div class="chips">
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+bangla+dub">🇧🇩 বাংলা</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+english+dub">🇺🇸 English</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+hindi+dub">🇮🇳 হিন্দি</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+tamil+dub">Tamil</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+indonesian+sub">🇮🇩 Indonesian</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+japanese+original">🇯🇵 Japanese</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+korean+dub">🇰🇷 Korean</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+spanish+dub">🇪🇸 Spanish</a></div>
+<p class="nt">লিংকগুলো অফিসিয়াল ভিডিওর সার্চ রেজাল্টে নিয়ে যায়।</p></section>
+<section class="panel"><h2>🇧🇩 বাংলা ও ডাবড</h2>
+<div class="chips">
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+bangla+dubbed+anime">বাংলা ডাবড (অফিসিয়াল)</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+english+dub">ইংলিশ ডাব</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+hindi+dub">হিন্দি ডাব</a>
+<a class="chip" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=official+anime+bangla+subtitle">বাংলা সাবটাইটেল</a></div>
+<p class="nt">অফিসিয়াল চ্যানেল বা লাইসেন্সপ্রাপ্ত প্ল্যাটফর্মে কী পাওয়া যায় তা সময়ের সাথে বদলায়, তাই লিংকগুলো সরাসরি সার্চ রেজাল্টে নিয়ে যায়।</p></section>
+<section class="panel"><h2>▶ ফ্রি ও বৈধ ভিডিও প্লেয়ার</h2>
+<div class="vin"><input id="vu" placeholder="YouTube ভিডিওর লিংক বসান (আপনার নিজের বা অনুমতিপ্রাপ্ত)"><button class="btn" id="vb">প্লে করুন</button></div>
+<div id="vo"></div>
+<p class="nt">শুধু আপনার নিজের বানানো, Creative Commons বা অফিসিয়াল চ্যানেলের ভিডিও এখানে চালান। ভিডিও না চললে নিচের লিংকে YouTube-এ দেখুন।</p></section>
+<section class="panel"><h2>➕ অ্যানিমে যোগ করুন</h2>
+<div class="fm"><input id="fn" placeholder="অ্যানিমের নাম" class="w"><input id="fy" placeholder="বছর (যেমন 2024)" inputmode="numeric"><select id="ft"></select><select id="fg"></select><input id="fr" type="number" min="1" max="10" step="0.1" placeholder="রেটিং (1-10)"><textarea id="fd" class="w" rows="2" placeholder="ছোট বর্ণনা"></textarea></div>
+<div class="row" style="margin-top:12px;align-items:center"><button class="btn" id="fa">যোগ করুন</button><button class="btn" id="fx" style="background:var(--line);color:var(--fg)">আমার যোগ করাগুলো মুছুন</button><span id="fm" class="nt" style="margin:0"></span></div>
+<p class="nt">যোগ করা অ্যানিমে আপনার নিজের ব্রাউজারে সেভ থাকে, অন্যের দেখায় না।</p></section>
+<section class="panel"><h2>⭐ কেন Animebox?</h2><div class="why">
+<div class="wc"><span>1</span><h3>সব তথ্য এক জায়গায়</h3><p>রেটিং, জেনরা, বছর আর ছোট বর্ণনা অ্যানিমের প্রতিটি কার্ডে।</p></div>
+<div class="wc"><span>2</span><h3>অফিসিয়াল ট্রেলার</h3><p>এক ক্লিকে YouTube-এ অফিসিয়াল ট্রেলার খুঁজে পাওয়া যায়।</p></div>
+<div class="wc"><span>3</span><h3>বৈধ দেখার লিংক</h3><p>"কোথায় দেখবেন" থেকে লাইসেন্সপ্রাপ্ত প্ল্যাটফর্মের তালিকা।</p></div>
+<div class="wc"><span>4</span><h3>ওয়াচলিস্ট</h3><p>পছন্দের অ্যানিমে সেভ করে রাখুন, পরে এক ক্লিকে দেখুন।</p></div>
+<div class="wc"><span>5</span><h3>মোবাইল ফ্রেন্ডলি</h3><p>ফোন, ট্যাবলেট ও পিসি — সবখানে সুন্দর ডিজাইন।</p></div>
+<div class="wc"><span>6</span><h3>ফ্রি, সাইন-আপ ছাড়া</h3><p>কোনো অ্যাকাউন্ট না বানিয়েই ব্রাউজ করুন।</p></div>
+</div></section>
+<section class="panel"><h2>❓ প্রশ্নোত্তর</h2>
+<details><summary>Animebox কি ফ্রি?</summary><p>হ্যাঁ, সাইটটা ব্যবহার করতে কোনো ফি বা সাইন-আপ লাগে না।</p></details>
+<details><summary>এখানে কি ফুল এপিসোড দেখা যায়?</summary><p>শুধু যে ভিডিওর বৈধ অনুমতি আছে (অফিসিয়াল চ্যানেল, নিজের বা অনুমতিপ্রাপ্ত ভিডিও)। বাকিগুলোর জন্য "কোথায় দেখবেন" বাটনে বৈধ প্ল্যাটফর্মের লিংক পাওয়া যায়।</p></details>
+<details><summary>ওয়াচলিস্ট কোথায় সেভ থাকে?</summary><p>আপনার নিজের ব্রাউজারে। অন্য ফোন বা ব্রাউজারে খুললে তালিকা দেখা যাবে না।</p></details>
+<details><summary>রেটিংগুলো কোথা থেকে নেওয়া?</summary><p>রেটিংগুলো আনুমানিক, শুধু ধারণা দেওয়ার জন্য।</p></details>
+</section>
+<div id="modal"><div class="box" id="box"></div></div>
+<footer><div class="ft">
+<div><h4>🎌 Animebox</h4><p>অ্যানিমে ও মুভি ডিসকভারি — রেটিং, ট্রেলার আর বৈধ দেখার লিংক এক জায়গায়।</p></div>
+<div><h4>ব্রাউজ</h4><a href="#" data-a="all">সব অ্যানিমে</a><a href="#" data-a="movie">মুভি</a><a href="#" data-a="trend">ট্রেন্ডিং</a></div>
+<div><h4>আপনার জন্য</h4><a href="#" data-a="wl">ওয়াচলিস্ট</a><a href="#" data-a="lang">ভাষা ও ডাব</a><a href="#" data-a="add">অ্যানিমে যোগ</a></div>
+<div><h4>বৈধ দেখা</h4><a href="https://www.justwatch.com" target="_blank" rel="noopener">JustWatch ↗</a><a href="https://www.crunchyroll.com" target="_blank" rel="noopener">Crunchyroll ↗</a><a href="#" data-a="vid">ভিডিও প্লেয়ার</a></div></div>
+© Animebox · শুধু তথ্য, রেটিং ও অফিসিয়াল লিংক · সব অ্যানিমে ও চরিত্রের স্বত্ব নিজ নিজ মালিকের · রেটিং আনুমানিক</footer>
+<script>
+var A=[
+["Attack on Titan","2013","সিরিজ","অ্যাকশন",8.5,"টাইটানদের হাত থেকে মানবজাতিকে বাঁচাতে এক তরুণের লড়াই।","#7f1d1d,#f97316"],
+["Demon Slayer","2019","সিরিজ","অ্যাকশন",8.4,"পরিবারের প্রতিশোধ আর বোনকে বাঁচাতে এক কিশোরের দানব শিকার।","#0f766e,#22d3ee"],
+["Death Note","2006","সিরিজ","থ্রিলার",8.6,"একটা রহস্যময় খাতা, আর বুদ্ধির এক ভয়ংকর খেলা।","#111827,#6b21a8"],
+["Fullmetal Alchemist: Brotherhood","2009","সিরিজ","ফ্যান্টাসি",9.1,"দুই ভাইয়ের অ্যালকেমি, ত্যাগ আর হারানো শরীর ফিরে পাওয়ার যাত্রা।","#b45309,#fbbf24"],
+["Your Name","2016","মুভি","রোমান্স",8.4,"দুই অচেনা কিশোর-কিশোরীর শরীর বদলের এক মন ছুঁয়ে যাওয়া গল্প।","#1d4ed8,#f472b6"],
+["Spirited Away","2001","মুভি","ফ্যান্টাসি",8.6,"আত্মাদের জগতে আটকে পড়া এক কিশোরীর অদ্ভুত অভিযান।","#047857,#a3e635"],
+["One Piece","1999","সিরিজ","অ্যাডভেঞ্চার",8.7,"সেরা ধন খুঁজতে সমুদ্রে ভেসে পড়া এক জলদস্যু দলের কাহিনি।","#0369a1,#fde047"],
+["Naruto","2002","সিরিজ","অ্যাকশন",8.0,"গ্রামের সবচেয়ে বড় নিনজা হওয়ার স্বপ্ন দেখা এক ছেলে।","#c2410c,#fb923c"],
+["Jujutsu Kaisen","2020","সিরিজ","অ্যাকশন",8.6,"অভিশপ্ত আত্মাদের বিরুদ্ধে লড়াই করা এক ছাত্রের গল্প।","#312e81,#818cf8"],
+["My Hero Academia","2016","সিরিজ","অ্যাকশন",7.9,"শক্তিহীন এক ছেলের সেরা হিরো হয়ে ওঠার পথ।","#15803d,#4ade80"],
+["Cowboy Bebop","1998","সিরিজ","সায়েন্স ফিকশন",8.8,"মহাকাশে ঘুরে বেড়ানো পুরস্কার-শিকারিদের স্টাইলিশ গল্প।","#1e293b,#f59e0b"],
+["Steins;Gate","2011","সিরিজ","সায়েন্স ফিকশন",9.1,"অতীতে মেসেজ পাঠিয়ে টাইম ট্রাভেলের এক রোমাঞ্চকর পরীক্ষা।","#be123c,#fb7185"],
+["Violet Evergarden","2018","সিরিজ","ড্রামা",8.5,"যুদ্ধের পর অনুভূতি বুঝতে শেখা এক মেয়ের হৃদয়স্পর্শী যাত্রা।","#4338ca,#a5b4fc"],
+["Weathering With You","2019","মুভি","রোমান্স",7.5,"আকাশ বদলাতে পারা এক মেয়ে আর ঘর ছাড়া এক ছেলের গল্প।","#0ea5e9,#e0f2fe"],
+["Haikyu!!","2014","সিরিজ","স্পোর্টস",8.7,"ছোটখাটো এক ছেলের ভলিবলে সেরা হওয়ার স্বপ্ন।","#ea580c,#fde68a"],
+["Spy x Family","2022","সিরিজ","কমেডি",8.6,"গুপ্তচর, খুনি আর টেলিপ্যাথ মেয়ের নকল পরিবারের মজার গল্প।","#db2777,#fbcfe8"],
+["Tokyo Ghoul","2014","সিরিজ","থ্রিলার",7.8,"মানুষ আর গুলের মাঝে আটকে পড়া এক ছাত্রের অন্ধকার যাত্রা।","#450a0a,#dc2626"],
+["Hunter x Hunter","2011","সিরিজ","অ্যাডভেঞ্চার",9.0,"বাবাকে খুঁজতে হান্টার পরীক্ষায় নামা এক ছেলের রোমাঞ্চকর অভিযান।","#166534,#bef264"],
+["Dragon Ball Z","1989","সিরিজ","অ্যাকশন",8.8,"পৃথিবী রক্ষায় গোকু ও তার বন্ধুদের মহাকাব্যিক লড়াই।","#c2410c,#facc15"],
+["Bleach","2004","সিরিজ","অ্যাকশন",7.9,"আত্মাদের দেখতে পাওয়া এক কিশোর হয়ে ওঠে সোল রিপার।","#1e3a8a,#fb923c"],
+["Chainsaw Man","2022","সিরিজ","অ্যাকশন",8.4,"ঋণে ডুবে থাকা ডেনজি ডেভিলের শক্তি পেয়ে শিকারি হয়ে ওঠে।","#7f1d1d,#fb923c"],
+["Vinland Saga","2019","সিরিজ","ড্রামা",8.7,"যুদ্ধ, প্রতিশোধ আর শান্তি খোঁজার ভাইকিং কাহিনি।","#334155,#94a3b8"],
+["Your Lie in April","2014","সিরিজ","রোমান্স",8.6,"সংগীত আর ভালোবাসা ফিরিয়ে আনে এক পিয়ানোবাদকের জীবন।","#be185d,#f9a8d4"],
+["A Silent Voice","2016","মুভি","ড্রামা",8.9,"অতীতের ভুল শোধরাতে চাওয়া এক ছেলের ক্ষমা আর বন্ধুত্বের গল্প।","#0e7490,#a5f3fc"],
+["Suzume","2022","মুভি","ফ্যান্টাসি",7.7,"দরজা বন্ধ করে বিপর্যয় ঠেকাতে ছোটা এক মেয়ের জাপান ভ্রমণ।","#7c3aed,#f0abfc"],
+["Princess Mononoke","1997","মুভি","ফ্যান্টাসি",8.7,"প্রকৃতি আর মানুষের সংঘাতের মাঝে এক যুবকের অভিযান।","#14532d,#86efac"],
+["Mob Psycho 100","2016","সিরিজ","কমেডি",8.5,"অসাধারণ ক্ষমতার সাধারণ এক স্কুলছাত্রের মজার ও আবেগী গল্প।","#0891b2,#f472b6"],
+["Blue Lock","2022","সিরিজ","স্পোর্টস",8.2,"সেরা স্ট্রাইকার হওয়ার জন্য ফুটবলারদের নির্মম প্রতিযোগিতা।","#1d4ed8,#38bdf8"],
+["Dr. Stone","2019","সিরিজ","সায়েন্স ফিকশন",8.3,"পাথর হয়ে যাওয়া পৃথিবীকে বিজ্ঞান দিয়ে নতুন করে গড়ার চেষ্টা।","#65a30d,#bae6fd"],
+["Fruits Basket","2019","সিরিজ","রোমান্স",8.2,"রাশিচক্রের পশুতে বদলে যাওয়া পরিবারের সাথে এক মেয়ের হৃদয়ছোঁয়া গল্প।","#f59e0b,#fda4af"],
+["Neon Genesis Evangelion","1995","সিরিজ","সায়েন্স ফিকশন",8.4,"দানবাকার প্রাণীদের ঠেকাতে রোবট চালানো কিশোরদের মানসিক টানাপোড়েন।","#581c87,#f97316"],
+["Code Geass","2006","সিরিজ","থ্রিলার",8.7,"এক নির্বাসিত রাজপুত্রের কূটচালে সাম্রাজ্যের বিরুদ্ধে বিদ্রোহ।","#1e1b4b,#a855f7"],
+["One Punch Man","2015","সিরিজ","কমেডি",8.5,"এক ঘুসিতে সবাইকে হারানো হিরোর একঘেয়েমি আর মজার গল্প।","#b91c1c,#fde047"],
+["Sword Art Online","2012","সিরিজ","ফ্যান্টাসি",7.2,"ভার্চুয়াল গেমে আটকা পড়া খেলোয়াড়দের বেঁচে থাকার লড়াই।","#0c4a6e,#38bdf8"],
+["Re:Zero","2016","সিরিজ","ফ্যান্টাসি",8.2,"মৃত্যুর পর বারবার সময়ে ফিরে আসা এক যুবকের কঠিন পরীক্ষা।","#3730a3,#c4b5fd"],
+["Kaguya-sama: Love Is War","2019","সিরিজ","রোমান্স",8.4,"কে আগে ভালোবাসার কথা বলবে, তা নিয়ে দুই মেধাবীর মজার মানসিক যুদ্ধ।","#9f1239,#fda4af"],
+["Black Clover","2017","সিরিজ","অ্যাকশন",7.9,"জাদুবিহীন এক ছেলের জাদুকর সম্রাট হওয়ার জেদ।","#14532d,#facc15"],
+["Fairy Tail","2009","সিরিজ","অ্যাডভেঞ্চার",7.6,"জাদুকরদের গিল্ডের বন্ধুত্ব আর অভিযানের গল্প।","#be123c,#60a5fa"],
+["Made in Abyss","2017","সিরিজ","অ্যাডভেঞ্চার",8.7,"রহস্যময় বিশাল গর্তের গভীরে নেমে যাওয়া দুই বন্ধুর ঝুঁকিপূর্ণ যাত্রা।","#1e293b,#fbbf24"],
+["Odd Taxi","2021","সিরিজ","থ্রিলার",8.7,"এক ট্যাক্সিচালকের যাত্রীদের মাধ্যমে জড়িয়ে পড়া রহস্যের জাল।","#0f172a,#22d3ee"],
+["Kimi ni Todoke","2009","সিরিজ","রোমান্স",8.0,"ভুল বোঝা এক লাজুক মেয়ের বন্ধুত্ব ও প্রথম ভালোবাসার গল্প।","#0284c7,#fbcfe8"],
+["Slam Dunk","1993","সিরিজ","স্পোর্টস",8.6,"বাস্কেটবলে নতুন এক ঝামেলাবাজ ছেলের দলের সেরা হয়ে ওঠা।","#dc2626,#fef08a"],
+["Akira","1988","মুভি","সায়েন্স ফিকশন",8.0,"ধ্বংসের পরের টোকিওতে এক মোটরসাইকেল গ্যাংয়ের ভয়ংকর শক্তির মুখোমুখি হওয়া।","#7f1d1d,#fb7185"],
+["Grave of the Fireflies","1988","মুভি","ড্রামা",8.5,"যুদ্ধের সময় বেঁচে থাকার চেষ্টা করা দুই ভাইবোনের মর্মস্পর্শী কাহিনি।","#78350f,#fcd34d"],
+["The Girl Who Leapt Through Time","2006","মুভি","সায়েন্স ফিকশন",7.9,"সময়ে লাফ দেওয়ার ক্ষমতা পাওয়া এক কিশোরীর গ্রীষ্মকাল।","#0369a1,#bae6fd"],
+["Ghost in the Shell","1995","মুভি","সায়েন্স ফিকশন",8.0,"সাইবার জগতে মানুষ আর যন্ত্রের পরিচয়ের সংকট।","#064e3b,#2dd4bf"],
+["Frieren: Beyond Journeys End","2023","সিরিজ","ফ্যান্টাসি",9.3,"যুদ্ধের পর দীর্ঘজীবী এক জাদুকরীর হারানো বন্ধুদের স্মৃতি খোঁজার যাত্রা।","#4c1d95,#a5f3fc"],
+["Solo Leveling","2024","সিরিজ","অ্যাকশন",8.2,"দুর্বলতম শিকারি থেকে সবচেয়ে শক্তিশালী হয়ে ওঠার গল্প।","#1e1b4b,#3b82f6"],
+["Dandadan","2024","সিরিজ","কমেডি",8.5,"ভূত আর এলিয়েনের মাঝখানে পড়া দুই কিশোরের পাগলাটে অভিযান।","#a21caf,#fde047"],
+["Oshi no Ko","2023","সিরিজ","ড্রামা",8.6,"বিনোদন জগতের চকচকে দিকের আড়ালের অন্ধকার গল্প।","#be185d,#c084fc"]
+];
+var CU=[];try{CU=JSON.parse(localStorage.getItem("ab_c")||"[]")}catch(e){}CU.forEach(function(c){A.push(c)});
+var WL="❤ ওয়াচলিস্ট",W=[];try{W=JSON.parse(localStorage.getItem("ab_w")||"[]")}catch(e){}
+function sv(){try{localStorage.setItem("ab_w",JSON.stringify(W))}catch(e){}}
+var ty="সব",gn="সব",G=document.getElementById("grid"),T=document.getElementById("trend"),q=document.getElementById("q");
+function uniq(i){return ["সব"].concat(A.map(function(a){return a[i]}).filter(function(v,k,s){return s.indexOf(v)===k}))}
+function mk(el,arr,get,set){arr.forEach(function(c){var b=document.createElement("button");b.className="chip"+(c==="সব"?" on":"");b.textContent=c;b.onclick=function(){set(c);[].forEach.call(el.children,function(x){x.classList.toggle("on",x===b)});render()};el.appendChild(b)})}
+function o(x){return "<option>"+x+"</option>"}
+function rb(){ty="সব";gn="সব";var t=document.getElementById("types"),g=document.getElementById("gens");t.innerHTML="";g.innerHTML="";
+ mk(t,uniq(2).concat([WL]),0,function(c){ty=c});mk(g,uniq(3),0,function(c){gn=c});
+ var s=document.getElementById("fg"),u=document.getElementById("ft"),sv1=s.value,sv2=u.value;s.innerHTML=uniq(3).slice(1).map(o).join("");u.innerHTML=uniq(2).slice(1).map(o).join("");if(sv1)s.value=sv1;if(sv2)u.value=sv2}
+rb();
+function bg(a){return "linear-gradient(150deg,"+a[6]+")"}
+function card(a){var d=document.createElement("div");d.className="card";
+ d.innerHTML='<div class="poster" style="background:'+bg(a)+'"><i class="lt">'+a[0].charAt(0)+'</i><span class="rt">★ '+a[4]+'</span><span class="ty">'+(a[2]==="মুভি"?"MOVIE":"SERIES")+'</span>'+a[0]+'</div><div class="ct">'+a[0]+'<small>'+a[1]+' · '+a[3]+'</small></div>';
+ d.onclick=function(e){var p=d.firstChild,r=p.getBoundingClientRect(),s=document.createElement("span");s.className="rip";s.style.left=(e.clientX-r.left-30)+"px";s.style.top=(e.clientY-r.top-30)+"px";p.appendChild(s);d.classList.add("clk");setTimeout(function(){d.classList.remove("clk");s.remove();show(a)},380)};return d}
+function render(){
+ var t=q.value.trim().toLowerCase();
+ var l=A.filter(function(a){return (ty==="সব"||(ty===WL?W.indexOf(a[0])>-1:a[2]===ty))&&(gn==="সব"||a[3]===gn)&&(!t||a[0].toLowerCase().indexOf(t)>-1)});
+ document.getElementById("ttl").textContent=(gn==="সব"?"সব":gn)+" অ্যানিমে";
+ G.innerHTML=l.length?"":'<p class="empty">কিছু পাওয়া যায়নি।</p>';
+ l.forEach(function(a,i){var c=card(a);c.style.animationDelay=Math.min(i*40,600)+"ms";G.appendChild(c)});
+}
+T.innerHTML="";A.slice().sort(function(a,b){return b[4]-a[4]}).slice(0,6).forEach(function(a){T.appendChild(card(a))});
+var V={"My Hero Academia":{n:"হিন্দি ডাব · Ani-One India (অফিসিয়াল চ্যানেল)",e:[["এপিসোড ১","UrWfd2XQrig"]]}};
+function ytu(id){return "https://www.youtube-nocookie.com/embed/"+id}
+function vid(a){var v=V[a[0]];if(!v)return "";var k=a[0];
+ return '<div><b>▶ ফ্রি ও অফিসিয়াল এপিসোড</b><p class="note">'+v.n+'</p><div class="chips" id="eps">'+v.e.map(function(x,i){return '<button class="chip'+(i?'':' on')+'" data-ep="'+i+'" data-k="'+k+'">'+x[0]+'</button>'}).join("")+'</div><iframe class="vp" id="pl" src="'+ytu(v.e[0][1])+'" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="row" style="margin-top:10px;align-items:center"><button class="btn" data-nx="-1" data-k="'+k+'">⏮ আগের</button><button class="btn" data-nx="1" data-k="'+k+'">পরের ⏭</button><a id="yl" class="nt" style="margin:0" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v='+v.e[0][1]+'">YouTube-এ খুলুন ↗</a></div></div>'}
+function show(a){
+ var e=encodeURIComponent(a[0]);
+ document.getElementById("box").innerHTML='<div class="poster" style="background:'+bg(a)+'"><i class="lt">'+a[0].charAt(0)+'</i>'+a[0]+'</div><div class="body"><div><span class="pill">'+a[1]+'</span><span class="pill">'+a[2]+'</span><span class="pill">'+a[3]+'</span><span class="pill">★ '+a[4]+'/10</span></div><p>'+a[5]+'</p><div class="row"><a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query='+e+'+official+trailer">▶ অফিসিয়াল ট্রেলার</a><a class="btn" style="background:#16a37f" target="_blank" rel="noopener" href="https://www.justwatch.com/us/search?q='+e+'">কোথায় দেখবেন</a><a class="btn" style="background:#f47521" target="_blank" rel="noopener" href="https://www.crunchyroll.com/search?q='+e+'">🎌 Crunchyroll-এ দেখুন</a><button class="btn" style="background:#e11d48" id="wl"></button><button class="btn" style="background:var(--line);color:var(--fg)" id="cl">বন্ধ করুন</button></div><p class="note">"কোথায় দেখবেন" থেকে বৈধ স্ট্রিমিং প্ল্যাটফর্মের তালিকা পাবেন।</p>'+vid(a)+'</div>';
+ document.getElementById("modal").classList.add("open");document.getElementById("cl").onclick=cls;
+ var w=document.getElementById("wl");function up(){w.textContent=W.indexOf(a[0])>-1?"💔 ওয়াচলিস্ট থেকে সরান":"❤ ওয়াচলিস্টে রাখুন"}up();
+ w.onclick=function(){var i=W.indexOf(a[0]);if(i>-1)W.splice(i,1);else W.push(a[0]);sv();up();render()}}
+function cls(){document.getElementById("modal").classList.remove("open")}
+document.getElementById("modal").onclick=function(e){if(e.target===this)cls()};
+var hi=0,H=document.getElementById("hero");
+function hero(){var a=A[hi];H.style.background=bg(a);
+ H.innerHTML='<i class="lt" style="font-size:18rem;top:-8%;right:6%">'+a[0].charAt(0)+'</i><h1>'+a[0]+'</h1><p>'+a[5]+'</p><div class="row"><button class="btn" id="hd">বিস্তারিত দেখুন</button><a class="btn g" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query='+encodeURIComponent(a[0])+'+official+trailer">▶ ট্রেলার</a></div>';
+ document.getElementById("hd").onclick=function(){show(a)}}
+hero();setInterval(function(){hi=(hi+1)%4;hero()},6000);
+document.getElementById("vb").onclick=function(){
+ var m=document.getElementById("vu").value.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/),o=document.getElementById("vo");
+ if(!m){o.innerHTML='<p class="empty">সঠিক YouTube লিংক দিন।</p>';return}
+ o.innerHTML='<iframe class="vp" src="https://www.youtube-nocookie.com/embed/'+m[1]+'" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><p class="nt"><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v='+m[1]+'">YouTube-এ খুলুন ↗</a></p>'};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return "&#"+c.charCodeAt(0)+";"})}
+var PAL=["#7c3aed,#f0abfc","#0e7490,#a5f3fc","#be123c,#fda4af","#15803d,#bef264","#c2410c,#fde047","#1d4ed8,#93c5fd","#9d174d,#f9a8d4","#0f172a,#38bdf8"];
+document.getElementById("fa").onclick=function(){
+ var m=document.getElementById("fm"),n=esc(document.getElementById("fn").value.trim());
+ if(!n){m.textContent="অ্যানিমের নাম লিখুন।";return}
+ var r=Math.max(1,Math.min(10,parseFloat(document.getElementById("fr").value)||7)),h=0;for(var i=0;i<n.length;i++)h+=n.charCodeAt(i);
+ var a=[n,esc(document.getElementById("fy").value.trim())||"-",document.getElementById("ft").value,document.getElementById("fg").value,r,esc(document.getElementById("fd").value.trim())||"নতুন যোগ করা অ্যানিমে।",PAL[h%PAL.length]];
+ A.push(a);CU.push(a);try{localStorage.setItem("ab_c",JSON.stringify(CU))}catch(e){}
+ rb();render();["fn","fy","fr","fd"].forEach(function(k){document.getElementById(k).value=""});m.textContent="✅ যোগ হয়েছে! সার্চে খুঁজুন।"};
+document.getElementById("fx").onclick=function(){A=A.filter(function(x){return CU.indexOf(x)<0});CU=[];try{localStorage.removeItem("ab_c")}catch(e){}rb();render();document.getElementById("fm").textContent="মুছে ফেলা হয়েছে।"};
+setTimeout(function(){document.getElementById("ld").classList.add("off")},1400);
+document.getElementById("box").addEventListener("click",function(e){
+ var t=e.target.closest("[data-ep],[data-nx]");if(!t)return;var v=V[t.getAttribute("data-k")];if(!v)return;
+ var cs=document.querySelectorAll("#eps .chip"),cur=0;[].forEach.call(cs,function(c,i){if(c.classList.contains("on"))cur=i});
+ var i=t.hasAttribute("data-ep")?+t.getAttribute("data-ep"):cur+(+t.getAttribute("data-nx"));
+ i=Math.max(0,Math.min(v.e.length-1,i));
+ [].forEach.call(cs,function(c,j){c.classList.toggle("on",j===i)});
+ document.getElementById("pl").src=ytu(v.e[i][1]);document.getElementById("yl").href="https://www.youtube.com/watch?v="+v.e[i][1]});
+function go(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"center"})}
+function setF(t,g){ty=t||"সব";gn=g||"সব";[].forEach.call(document.querySelectorAll("#types .chip"),function(c){c.classList.toggle("on",c.textContent===ty)});[].forEach.call(document.querySelectorAll("#gens .chip"),function(c){c.classList.toggle("on",c.textContent===gn)});render();go("ttl")}
+var ACT={all:function(){setF()},movie:function(){setF("মুভি")},trend:function(){go("trend")},wl:function(){setF(WL)},lang:function(){go("lg")},vid:function(){go("vu")},add:function(){go("fn")}};
+document.addEventListener("click",function(e){var t=e.target.closest("[data-a],[data-g]");if(!t)return;e.preventDefault();if(t.hasAttribute("data-g"))setF(null,t.getAttribute("data-g"));else if(ACT[t.getAttribute("data-a")])ACT[t.getAttribute("data-a")]()});
+(function(){var gt=document.getElementById("gt"),ic={"অ্যাকশন":"⚔","থ্রিলার":"🧩","ফ্যান্টাসি":"🪄","রোমান্স":"💕","কমেডি":"😄","ড্রামা":"🎭","স্পোর্টস":"🏀","সায়েন্স ফিকশন":"🚀","অ্যাডভেঞ্চার":"🧭"};
+ uniq(3).slice(1).forEach(function(g){var b=document.createElement("button");b.className="tl";b.setAttribute("data-g",g);var i=document.createElement("i");i.textContent=ic[g]||"🎌";var s=document.createElement("span"),n=document.createElement("b");n.textContent=g;s.appendChild(n);b.appendChild(i);b.appendChild(s);gt.appendChild(b)})})();
+var TG=document.getElementById("tg");
+function curT(){return document.documentElement.getAttribute("data-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light")}
+function apT(t){document.documentElement.setAttribute("data-theme",t);TG.textContent=t==="dark"?"☀️":"🌙"}
+var sT=null;try{sT=localStorage.getItem("ab_t")}catch(e){}
+apT(sT==="dark"||sT==="light"?sT:curT());
+TG.onclick=function(){var n=curT()==="dark"?"light":"dark";apT(n);TG.classList.remove("sp");void TG.offsetWidth;TG.classList.add("sp");try{localStorage.setItem("ab_t",n)}catch(e){}};
+q.oninput=render;render();
+</script>
+</body>
+</html>
